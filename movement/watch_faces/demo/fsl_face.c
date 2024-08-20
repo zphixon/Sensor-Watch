@@ -35,7 +35,7 @@ void fsl_face_setup(movement_settings_t *settings, uint8_t watch_face_index, voi
     }
 }
 
-#define FSL     "     FSLur"
+#define FSL     "    F-SLur"
 #define URA_FSL "UrA  FSLur"
 
 void fsl_face_activate(movement_settings_t *settings, void *context) {
@@ -54,6 +54,7 @@ bool fsl_face_loop(movement_event_t event, movement_settings_t *settings, void *
             watch_set_colon();
             watch_clear_all_indicators();
             break;
+
         case EVENT_TICK:
             if (state->bell) {
                 watch_set_indicator(WATCH_INDICATOR_BELL);
@@ -62,16 +63,20 @@ bool fsl_face_loop(movement_event_t event, movement_settings_t *settings, void *
             }
             state->bell = !state->bell;
             break;
+
         case EVENT_ALARM_BUTTON_UP:
             if (state->screen[0] == 'U') {
                 sprintf(state->screen, FSL);
             } else {
                 sprintf(state->screen, URA_FSL);
             }
+            watch_display_string(state->screen, 0);
             break;
+
         case EVENT_TIMEOUT:
             movement_move_to_face(0);
             break;
+
         default:
             return movement_default_loop_handler(event, settings);
     }
