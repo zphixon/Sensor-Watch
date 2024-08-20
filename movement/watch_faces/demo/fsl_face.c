@@ -35,14 +35,18 @@ void fsl_face_setup(movement_settings_t *settings, uint8_t watch_face_index, voi
     }
 }
 
-#define FSL     "    F-SLur"
-#define URA_FSL "UrA  FSLur"
+char *screens[] = {
+    "     FSLur",
+    "    EGGBuG",
+    NULL
+};
 
 void fsl_face_activate(movement_settings_t *settings, void *context) {
     (void) settings;
     fsl_state_t *state = (fsl_state_t *)context;
-    state->bell = 0;
-    sprintf(state->screen, FSL);
+    state->screen = 0;
+    state->colon = FSL_COLON_ON;
+    state->blink = 1;
 }
 
 bool fsl_face_loop(movement_event_t event, movement_settings_t *settings, void *context) {
@@ -50,27 +54,40 @@ bool fsl_face_loop(movement_event_t event, movement_settings_t *settings, void *
 
     switch (event.event_type) {
         case EVENT_ACTIVATE:
-            watch_display_string(state->screen, 0);
-            watch_set_colon();
+            watch_display_string(screens[state->screen], 0);
             watch_clear_all_indicators();
             break;
 
         case EVENT_TICK:
-            if (state->bell) {
-                watch_set_indicator(WATCH_INDICATOR_BELL);
-            } else {
-                watch_clear_indicator(WATCH_INDICATOR_BELL);
+            if (state->colon == FSL_COLON_BLINK) {
+                if (state->blink) {
+                    watch_set_colon();
+                } else {
+                    watch_clear_colon();
+                }
+                state->blink = !state->blink;
             }
-            state->bell = !state->bell;
+            break;
+
+        case EVENT_LIGHT_BUTTON_UP:
+            state->colon += 1;
+            state->colon %= 3;
+
+            if (state->colon == FSL_COLON_ON) {
+                watch_set_colon();
+            }
+            if (state->colon == FSL_COLON_OFF) {
+                watch_clear_colon();
+            }
+
             break;
 
         case EVENT_ALARM_BUTTON_UP:
-            if (state->screen[0] == 'U') {
-                sprintf(state->screen, FSL);
-            } else {
-                sprintf(state->screen, URA_FSL);
+            state->screen++;
+            if (screens[state->screen] == NULL) {
+                state->screen = 0;
             }
-            watch_display_string(state->screen, 0);
+            watch_display_string(screens[state->screen], 0);
             break;
 
         case EVENT_TIMEOUT:
