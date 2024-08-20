@@ -40,31 +40,29 @@ void fsl_face_setup(movement_settings_t *settings, uint8_t watch_face_index, voi
 void fsl_face_activate(movement_settings_t *settings, void *context) {
     (void) settings;
     fsl_state_t *state = (fsl_state_t *)context;
-
-    // Handle any tasks related to your watch face coming on screen.
+    state->bell = 0;
 }
 
 bool fsl_face_loop(movement_event_t event, movement_settings_t *settings, void *context) {
     fsl_state_t *state = (fsl_state_t *)context;
     char buf[11];
-    int bell = 0;
+    sprintf(buf, "     FSLur");
 
     switch (event.event_type) {
         case EVENT_ACTIVATE:
             // Show your initial UI here.
-            sprintf(buf, "     FSLur");
             watch_display_string(buf, 0);
             watch_set_colon();
             watch_clear_all_indicators();
             break;
         case EVENT_TICK:
             // If needed, update your display here.
-            if (bell) {
+            if (state->bell) {
                 watch_set_indicator(WATCH_INDICATOR_BELL);
             } else {
                 watch_clear_indicator(WATCH_INDICATOR_BELL);
             }
-            bell = !bell;
+            state->bell = !state->bell;
             break;
         case EVENT_LIGHT_BUTTON_UP:
             // You can use the Light button for your own purposes. Note that by default, Movement will also
@@ -100,7 +98,7 @@ bool fsl_face_loop(movement_event_t event, movement_settings_t *settings, void *
     //  * If you are sounding the buzzer using the low-level watch_set_buzzer_on function, you should return false.
     // Note that if you are driving the LED or buzzer using Movement functions like movement_illuminate_led or
     // movement_play_alarm, you can still return true. This guidance only applies to the low-level watch_ functions.
-    return false;
+    return true;
 }
 
 void fsl_face_resign(movement_settings_t *settings, void *context) {
