@@ -37,6 +37,7 @@
 typedef struct {
     // Anything you need to keep track of, put it here!
     uint8_t bell;
+    char screen[11];
 } fsl_state_t;
 
 void fsl_face_setup(movement_settings_t *settings, uint8_t watch_face_index, void ** context_ptr);
