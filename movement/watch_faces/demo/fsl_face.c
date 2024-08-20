@@ -100,7 +100,7 @@ bool fsl_face_loop(movement_event_t event, movement_settings_t *settings, void *
     //  * If you are sounding the buzzer using the low-level watch_set_buzzer_on function, you should return false.
     // Note that if you are driving the LED or buzzer using Movement functions like movement_illuminate_led or
     // movement_play_alarm, you can still return true. This guidance only applies to the low-level watch_ functions.
-    return true;
+    return false;
 }
 
 void fsl_face_resign(movement_settings_t *settings, void *context) {
