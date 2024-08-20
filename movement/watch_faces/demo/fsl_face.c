@@ -62,7 +62,7 @@ bool fsl_face_loop(movement_event_t event, movement_settings_t *settings, void *
             }
             state->bell = !state->bell;
             break;
-        case EVENT_ALARM_BUTTON_DOWN:
+        case EVENT_ALARM_BUTTON_UP:
             if (state->screen[0] == 'U') {
                 sprintf(state->screen, FSL);
             } else {
