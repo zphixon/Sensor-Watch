@@ -32,31 +32,29 @@ void fsl_face_setup(movement_settings_t *settings, uint8_t watch_face_index, voi
     if (*context_ptr == NULL) {
         *context_ptr = malloc(sizeof(fsl_state_t));
         memset(*context_ptr, 0, sizeof(fsl_state_t));
-        // Do any one-time tasks in here; the inside of this conditional happens only at boot.
     }
-    // Do any pin or peripheral setup here; this will be called whenever the watch wakes from deep sleep.
 }
+
+#define FSL     "     FSLur"
+#define URA_FSL "UrA  FSLur"
 
 void fsl_face_activate(movement_settings_t *settings, void *context) {
     (void) settings;
     fsl_state_t *state = (fsl_state_t *)context;
     state->bell = 0;
+    sprintf(state->screen, FSL);
 }
 
 bool fsl_face_loop(movement_event_t event, movement_settings_t *settings, void *context) {
     fsl_state_t *state = (fsl_state_t *)context;
-    char buf[11];
-    sprintf(buf, "     FSLur");
 
     switch (event.event_type) {
         case EVENT_ACTIVATE:
-            // Show your initial UI here.
-            watch_display_string(buf, 0);
+            watch_display_string(state->screen, 0);
             watch_set_colon();
             watch_clear_all_indicators();
             break;
         case EVENT_TICK:
-            // If needed, update your display here.
             if (state->bell) {
                 watch_set_indicator(WATCH_INDICATOR_BELL);
             } else {
@@ -64,47 +62,25 @@ bool fsl_face_loop(movement_event_t event, movement_settings_t *settings, void *
             }
             state->bell = !state->bell;
             break;
-        case EVENT_LIGHT_BUTTON_UP:
-            // You can use the Light button for your own purposes. Note that by default, Movement will also
-            // illuminate the LED in response to EVENT_LIGHT_BUTTON_DOWN; to suppress that behavior, add an
-            // empty case for EVENT_LIGHT_BUTTON_DOWN.
-            break;
-        case EVENT_ALARM_BUTTON_UP:
-            // Just in case you have need for another button.
+        case EVENT_ALARM_BUTTON_DOWN:
+            if (state->screen[0] == 'U') {
+                sprintf(state->screen, FSL);
+            } else {
+                sprintf(state->screen, URA_FSL);
+            }
             break;
         case EVENT_TIMEOUT:
-            // Your watch face will receive this event after a period of inactivity. If it makes sense to resign,
-            // you may uncomment this line to move back to the first watch face in the list:
-            // movement_move_to_face(0);
-            break;
-        case EVENT_LOW_ENERGY_UPDATE:
-            // If you did not resign in EVENT_TIMEOUT, you can use this event to update the display once a minute.
-            // Avoid displaying fast-updating values like seconds, since the display won't update again for 60 seconds.
-            // You should also consider starting the tick animation, to show the wearer that this is sleep mode:
-            // watch_start_tick_animation(500);
+            movement_move_to_face(0);
             break;
         default:
-            // Movement's default loop handler will step in for any cases you don't handle above:
-            // * EVENT_LIGHT_BUTTON_DOWN lights the LED
-            // * EVENT_MODE_BUTTON_UP moves to the next watch face in the list
-            // * EVENT_MODE_LONG_PRESS returns to the first watch face (or skips to the secondary watch face, if configured)
-            // You can override any of these behaviors by adding a case for these events to this switch statement.
             return movement_default_loop_handler(event, settings);
     }
 
-    // return true if the watch can enter standby mode. Generally speaking, you should always return true.
-    // Exceptions:
-    //  * If you are displaying a color using the low-level watch_set_led_color function, you should return false.
-    //  * If you are sounding the buzzer using the low-level watch_set_buzzer_on function, you should return false.
-    // Note that if you are driving the LED or buzzer using Movement functions like movement_illuminate_led or
-    // movement_play_alarm, you can still return true. This guidance only applies to the low-level watch_ functions.
     return true;
 }
 
 void fsl_face_resign(movement_settings_t *settings, void *context) {
     (void) settings;
     (void) context;
-
-    // handle any cleanup before your watch face goes off-screen.
 }
 
