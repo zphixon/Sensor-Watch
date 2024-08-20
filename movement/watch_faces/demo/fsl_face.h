@@ -37,6 +37,7 @@
 #define FSL_COLON_OFF 0
 #define FSL_COLON_BLINK 1
 #define FSL_COLON_ON 2
+#define FSL_NUM_COLON_STATES 3
 
 typedef struct {
     uint8_t screen;

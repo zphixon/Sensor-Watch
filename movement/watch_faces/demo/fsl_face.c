@@ -56,6 +56,7 @@ bool fsl_face_loop(movement_event_t event, movement_settings_t *settings, void *
         case EVENT_ACTIVATE:
             watch_display_string(screens[state->screen], 0);
             watch_clear_all_indicators();
+            watch_set_colon();
             break;
 
         case EVENT_TICK:
@@ -71,7 +72,7 @@ bool fsl_face_loop(movement_event_t event, movement_settings_t *settings, void *
 
         case EVENT_LIGHT_BUTTON_UP:
             state->colon += 1;
-            state->colon %= 3;
+            state->colon %= FSL_NUM_COLON_STATES;
 
             if (state->colon == FSL_COLON_ON) {
                 watch_set_colon();
