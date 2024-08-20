@@ -34,10 +34,14 @@
  *
  */
 
+#define FSL_COLON_OFF 0
+#define FSL_COLON_BLINK 1
+#define FSL_COLON_ON 2
+
 typedef struct {
-    // Anything you need to keep track of, put it here!
-    uint8_t bell;
-    char screen[11];
+    uint8_t screen;
+    uint8_t colon;
+    uint8_t blink;
 } fsl_state_t;
 
 void fsl_face_setup(movement_settings_t *settings, uint8_t watch_face_index, void ** context_ptr);
