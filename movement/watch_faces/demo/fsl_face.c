@@ -36,8 +36,8 @@ void fsl_face_setup(movement_settings_t *settings, uint8_t watch_face_index, voi
 }
 
 char *screens[] = {
-    "     FSLur",
     "    EGGBuG",
+    "     FSLur",
     NULL
 };
 
